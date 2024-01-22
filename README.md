@@ -45,3 +45,4 @@ https://sfile-api.vercel.app/download/<id>
     },
     "msg": "success"
 }
+```
