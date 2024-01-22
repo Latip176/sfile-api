@@ -45,10 +45,15 @@ class Download(requests.Session):
 		response = self.get(MAIN_URL + data)
 		return BeautifulSoup(response.text, "html.parser")
 		
+	def getDownloadHref(self, url: str) -> str:
+		soup = BeautifulSoup(self.get(url).text, "html.parser")
+		button = soup.find('a', attrs={"id": "download"})
+		return button['href'] + "".join(re.findall("'([^']*)'", str(button['onclick'])))
+		
 	def getData(self, id: str) -> dict:
 		soup = self.response(id)
 		download_href = soup.find("a", id="download")['href']
 		upload_date = re.search('Uploaded\:\s(.*?)<\/', str(soup)).group(1)
 		download_count = re.search('Downloads\:\s(.*?)<\/', str(soup)).group(1)
-		return {"url": download_href, "date": upload_date, "downloaded": download_count}
+		return {"url": self.getDownloadHref(download_href), "date": upload_date, "downloaded": download_count}
 		
